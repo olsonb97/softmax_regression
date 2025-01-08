@@ -19,7 +19,7 @@ class SoftmaxModel(SoftmaxPlot):
 
     def _calculate_gradients(self, x, y, p):
         d_w = (-1/x.shape[0]) * x.T @ (y - p)
-        d_b = (-1/x.shape[0]) * np.sum(p - y, axis=0)
+        d_b = (-1/x.shape[0]) * np.sum(y - p, axis=0)
         return d_w, d_b
 
     def _adjust_parameters(self, d_w, d_b, learning_rate):
