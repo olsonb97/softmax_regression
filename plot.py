@@ -13,7 +13,7 @@ class SoftmaxPlot:
         self.axes[0].set_xlabel("Epochs")
         self.axes[0].set_ylabel("Loss")
 
-    def _plot_learning_rate(self, learning_rate, epochs):
+    def _plot_learning_rate(self, epochs, learning_rate):
         self.axes[1].plot(epochs, learning_rate)
         self.axes[1].set_title("Learning Rate Decay")
         self.axes[1].set_xlabel("Epochs")
@@ -45,9 +45,10 @@ class SoftmaxPlot:
         self.axes[3].set_xticks(range(1, len(bias)+1))
         self.axes[3].legend()
     
-    def plot_training(self, loss, epochs, learning_rate, weights, bias):
+    def plot_training(self, loss, epochs, learning_rates, weights, bias):
+        epochs = range(1, epochs+1)
         self._plot_loss(loss, epochs)
-        self._plot_learning_rate(learning_rate, epochs)
+        self._plot_learning_rate(epochs, learning_rates)
         self._plot_weight_convergence(weights)
         self._plot_bias_convergence(bias)
 

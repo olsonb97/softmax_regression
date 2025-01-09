@@ -73,8 +73,8 @@ class SoftmaxModel(SoftmaxPlot):
         if plot:
             self.plot_training(
                 loss=losses,
-                epochs=range(1, epochs+1),
-                learning_rate=learning_rate,
+                epochs=epochs,
+                learning_rates=learning_rates,
                 weights=self.weights,
                 bias=self.bias
             )
