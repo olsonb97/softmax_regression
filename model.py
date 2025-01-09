@@ -102,3 +102,8 @@ class SoftmaxModel(SoftmaxPlot):
             weights=self.weights,
             bias=self.bias
         )
+
+    def load(self, filename="./params.npz"):
+        params = np.load(filename)
+        self.weights = params["weights"]
+        self.bias = params["bias"]
