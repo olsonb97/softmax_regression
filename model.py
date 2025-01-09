@@ -35,17 +35,18 @@ class SoftmaxModel(SoftmaxPlot):
     def _initialize_sets(self, dataset, labels):
         num_features = dataset.shape[1]
         num_classes = len(np.unique(labels))
+        xavier = np.sqrt(2 / (num_features + num_classes))
         if self.weights is None:
-            self.weights = np.random.uniform(-0.1, 0.1, size=(num_features, num_classes))
+            self.weights = np.random.uniform(-xavier, xavier, size=(num_features, num_classes)).astype(np.float32)
         if self.bias is None:
-            self.bias = np.random.uniform(-0.1, 0.1, size=(num_classes,))
+            self.bias = np.random.uniform(size=(num_classes,)).astype(np.float32)
         
     def _shuffle_data(self, dataset, labels):
         indices = np.arange(len(labels))
         np.random.shuffle(indices)
         return dataset[indices], labels[indices]
     
-    def train(self, dataset, labels, epochs, learning_rate=0.01, decay_rate=0.001, plot=True):
+    def train(self, dataset, labels, epochs, learning_rate=0.01, decay_rate=0.001, plot=True, print_interval=50):
         self._initialize_sets(dataset, labels)
 
         x = dataset
@@ -66,14 +67,17 @@ class SoftmaxModel(SoftmaxPlot):
             losses[epoch] = loss
             learning_rates[epoch] = eta
 
-            if (epoch+1) % 100 == 0:
+            if (epoch+1) % print_interval == 0:
                 print(f"Epoch: {epoch+1}/{epochs}, Loss: {loss}, Learning Rate: {eta}")
 
         if plot:
-            self.plot_loss(losses, range(1, epochs+1))
-            self.plot_learning_rate(learning_rates, range(1, epochs+1))
-            self.plot_weight_convergence(self.weights)
-            self.plot_bias_convergence(self.bias)
+            self.plot_training(
+                loss=losses,
+                epochs=range(1, epochs+1),
+                learning_rate=learning_rate,
+                weights=self.weights,
+                bias=self.bias
+            )
             self.show()
 
     def predict(self, data):

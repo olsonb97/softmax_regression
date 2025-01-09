@@ -7,19 +7,19 @@ class SoftmaxPlot:
             self.fig.add_subplot(2, 2, i+1) for i in range(4)
         ]
 
-    def plot_loss(self, loss, epochs):
+    def _plot_loss(self, loss, epochs):
         self.axes[0].plot(epochs, loss)
         self.axes[0].set_title("Loss Minimization")
         self.axes[0].set_xlabel("Epochs")
         self.axes[0].set_ylabel("Loss")
 
-    def plot_learning_rate(self, learning_rate, epochs):
+    def _plot_learning_rate(self, learning_rate, epochs):
         self.axes[1].plot(epochs, learning_rate)
         self.axes[1].set_title("Learning Rate Decay")
         self.axes[1].set_xlabel("Epochs")
         self.axes[1].set_ylabel("Learn Rate")
 
-    def plot_weight_convergence(self, weights):
+    def _plot_weight_convergence(self, weights):
         for class_idx in range(weights.shape[1]):
             self.axes[2].plot(
                 range(1, weights.shape[0]+1),
@@ -31,7 +31,7 @@ class SoftmaxPlot:
         self.axes[2].set_ylabel("Weight Values")
         self.axes[2].legend()
 
-    def plot_bias_convergence(self, bias):
+    def _plot_bias_convergence(self, bias):
         for class_idx, bias_value in enumerate(bias):
             self.axes[3].plot(
                 class_idx+1, 
@@ -45,6 +45,13 @@ class SoftmaxPlot:
         self.axes[3].set_xticks(range(1, len(bias)+1))
         self.axes[3].legend()
     
+    def plot_training(self, loss, epochs, learning_rate, weights, bias):
+        self._plot_loss(loss, epochs)
+        self._plot_learning_rate(learning_rate, epochs)
+        self._plot_weight_convergence(weights)
+        self._plot_bias_convergence(bias)
+
     def show(self):
         plt.tight_layout()
         plt.show()
+        plt.close(self.fig)
