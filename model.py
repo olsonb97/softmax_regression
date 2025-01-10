@@ -45,30 +45,55 @@ class SoftmaxModel(SoftmaxPlot):
         indices = np.arange(len(labels))
         np.random.shuffle(indices)
         return dataset[indices], labels[indices]
-    
-    def train(self, dataset, labels, epochs, learning_rate=0.01, decay_rate=0.001, plot=True, print_interval=50):
-        self._initialize_sets(dataset, labels)
 
+    def _process_batch(self, x_batch, y_batch, w, b, eta):
+        z = self._calculate_logits(x_batch, w, b)
+        p = self._calculate_probabilities(z)
+        dw, db = self._calculate_gradients(x_batch, y_batch, p)
+        self._adjust_parameters(dw, db, eta)
+        return self._calculate_loss(p, y_batch)
+
+    def train(
+            self,
+            dataset,
+            labels,
+            epochs,
+            batches=1,
+            learning_rate=0.01,
+            decay_rate=0.001,
+            shuffle=True,
+            plot=True,
+            print_interval=None
+    ):
+        self._initialize_sets(dataset, labels)
         x = dataset
         y = np.eye(len(np.unique(labels)))[labels]
         losses = np.zeros(shape=(epochs,))
         learning_rates = np.zeros(shape=(epochs,))
 
-        for epoch in range(epochs):
-            x, y = self._shuffle_data(x, y)
-            eta = learning_rate / (1 + decay_rate * epoch)
-            w = self.weights
-            b = self.bias
-            z = self._calculate_logits(x, w, b)
-            p = self._calculate_probabilities(z)
-            dw, db = self._calculate_gradients(x, y, p)
-            self._adjust_parameters(dw, db, eta)
-            loss = self._calculate_loss(p, y)
-            losses[epoch] = loss
-            learning_rates[epoch] = eta
+        try:
+            for epoch in range(epochs):
+                x, y = self._shuffle_data(x, y) if shuffle else (x, y)
+                eta = learning_rate / (1 + decay_rate * epoch)
+                batch_size = x.shape[0] // batches
+                epoch_loss = 0
+                w = self.weights
+                b = self.bias
 
-            if (epoch+1) % print_interval == 0:
-                print(f"Epoch: {epoch+1}/{epochs}, Loss: {loss}, Learning Rate: {eta}")
+                for i in range(batches):
+                    start = i * batch_size
+                    end = (i + 1) * batch_size
+                    x_batch = x[start:end]
+                    y_batch = y[start:end]
+                    epoch_loss += self._process_batch(x_batch, y_batch, w, b, eta)
+
+                losses[epoch] = epoch_loss / batches
+                learning_rates[epoch] = eta
+
+                if (epoch + 1) % print_interval == 0 and print_interval:
+                    print(f"Epoch: {epoch+1}/{epochs}, Loss: {losses[epoch]:.6f}, Learning Rate: {eta:.6f}")
+        except KeyboardInterrupt:
+            pass
 
         if plot:
             self.plot_training(
