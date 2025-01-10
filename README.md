@@ -1,28 +1,30 @@
 
-# Softmax Regression from Scratch
+# Softmax Regression Foundations
 
-![Softmax Regression](res/demo.png)
-A minimal implementation of multinomial/softmax regression using only NumPy and Matplotlib. This project is designed for experimenting and understanding how softmax regression works under the hood.
+![Softmax Model Analytics](res/demo.png)
+A minimal implementation of softmax regression using only NumPy and Matplotlib. This project is designed for experimenting and understanding how softmax works under the hood.
+It utilizes multinomial regression to model the feature space, allowing for any number of classes and features.
 
 ## Overview
 
-- **model.py**: Contains the `SoftmaxModel` class, which handles training, inference, parameter updates, and saving/loading model parameters.
-- **plot.py**: Defines the `SoftmaxPlot` class for plotting loss, learning rate decay, weight convergence, and bias convergence.
+- **model.py**: Contains the `SoftmaxModel` class, which handles training, inference, and saving/loading model parameters.
+
+- **plot.py**: Contains the `SoftmaxPlot` class for plotting training analytics. Can be enabled or disabled as a popup.
 
 ## Installation
 
-1. Clone this repository:
+1. Clone the repo:
    ```bash
    git clone https://github.com/olsonb97/softmax_regression.git
    ```
 2. Install dependencies:
    ```bash
-   pip install -r requirements.txt
+   pip install numpy matplotlib
    ```
 
 ## Usage
 
-1. Prepare your dataset and labels.
+1. Prepare dataset and labels. Normalize the data, as the model does not handle this internally.
 2. Create an instance of `SoftmaxModel` and call its `train` method:
    ```python
    from model import SoftmaxModel
@@ -44,21 +46,17 @@ A minimal implementation of multinomial/softmax regression using only NumPy and 
    accuracy = model.test(dataset, labels)
    print("Accuracy:", accuracy)
    ```
-4. Save or load model parameters:
+4. Save model parameters:
    ```python
-   model.save("my_params.npz")
-   model.load("my_params.npz")
+   model.save("params.npz")
+   ```
+5. Load model parameters and avoid re-training:
+   ```python
+   model = SoftmaxModel()
+   model.load("params.npz")
    ```
 
 ## Notes
 
-- The `SoftmaxModel` class inherits from `SoftmaxPlot` to allow plotting of training metrics.
-- This code is intended for educational and experimental purposes rather than production use.
-
-## Contributing
-
-Pull requests and issues are welcome for any improvements or suggestions.
-
-## License
-
-This project is released under the [MIT License](LICENSE).
+- The `SoftmaxModel` class inherits from `SoftmaxPlot` to allow plotting the training metrics.
+- This project is intended for educational/experimental purposes and runs quite slow compared to better suited alternatives, such as Sci-kit.
