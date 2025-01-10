@@ -1,5 +1,5 @@
 import numpy as np
-from plot import SoftmaxPlot
+from .plot import SoftmaxPlot
 
 class SoftmaxModel(SoftmaxPlot):
     """Softmax Regression Model"""
